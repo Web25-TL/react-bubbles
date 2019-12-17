@@ -4,15 +4,20 @@ import { axiosWithAuth as axios } from "../utils/axiosWithAuth.js";
 import Bubbles from "./Bubbles";
 import ColorList from "./ColorList";
 
-const BubblePage = (props) => {
+const BubblePage = props => {
   const [colorList, setColorList] = useState(props.colors);
-  const [myColors, setMyColors] = useState([])
+  const [myColors, setMyColors] = useState([]);
 
   useEffect(() => {
-    axios().get('/colors')
-    .then(res => setColorList(res.data))
-    .catch(err => console.log(err))
-  }, [myColors])
+    axios()
+      .get("/colors")
+      .then(res => {
+        setColorList(res.data);
+
+        // colorList.map(i => setMyColors([...myColors, i]));
+      })
+      .catch(err => console.log(err));
+  }, []);
 
   return (
     <>
@@ -23,7 +28,7 @@ const BubblePage = (props) => {
 };
 
 BubblePage.defaultProps = {
-  colors: [{color: "black", code: {hex: "#000000", id: null}}]
-}
+  colors: [{ color: "black", code: { hex: "#000000", id: null } }]
+};
 
 export default BubblePage;

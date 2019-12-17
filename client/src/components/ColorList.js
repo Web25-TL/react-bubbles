@@ -9,12 +9,13 @@ const initialColor = {
 const ColorList = ({ colors, updateColors }) => {
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
+  const [newColor, setNewColor] = useState(initialColor);
 
   useEffect(() => {
     axios()
       .get("/colors")
       .then(res => updateColors(res.data));
-  }, [editing]);
+  }, [editing, updateColors]);
 
   const editColor = color => {
     setEditing(true);
@@ -24,9 +25,21 @@ const ColorList = ({ colors, updateColors }) => {
   const colorChangeHandler = e => {
     setColorToEdit({ ...colorToEdit, color: e.target.value });
   };
+
+  const addColorChangeHandler = e => {
+    setNewColor({ ...newColor, color: e.target.value });
+  };
+
   const hexChangeHandler = e => {
     setColorToEdit({
       ...colorToEdit,
+      code: { hex: e.target.value }
+    });
+  };
+
+  const addHexChangeHandler = e => {
+    setNewColor({
+      ...newColor,
       code: { hex: e.target.value }
     });
   };
@@ -52,6 +65,16 @@ const ColorList = ({ colors, updateColors }) => {
     colorUpdate();
   };
 
+  const addColor = color => {
+    console.log("color: ", color);
+    axios()
+      .post("/colors", color)
+      .then(res => console.log("Success. This is your new color: ", newColor))
+      .catch(err => console.log(err));
+
+    // colorUpdate();
+  };
+
   function colorUpdate() {
     setTimeout(() => {
       axios()
@@ -60,6 +83,8 @@ const ColorList = ({ colors, updateColors }) => {
         .catch(err => console.log(err));
     }, 100);
   }
+
+  console.log("colors: ", newColor);
   return (
     <div className="colors-wrap">
       <p>colors</p>
@@ -103,6 +128,18 @@ const ColorList = ({ colors, updateColors }) => {
       )}
       <div className="spacer" />
       {/* stretch - build another form here to add a color */}
+      <form onSubmit={() => addColor(newColor)}>
+        <legend>add color</legend>
+        <label>
+          color name:
+          <input onChange={addColorChangeHandler} value={newColor.color} />
+        </label>
+        <label>
+          hex code:
+          <input onChange={addHexChangeHandler} value={newColor.code.hex} />
+        </label>
+        <button type="submit">add</button>
+      </form>
     </div>
   );
 };
