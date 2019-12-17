@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { axiosWithAuth as axios } from "../utils/axiosWithAuth.js";
 
 import Bubbles from "./Bubbles";
+import Ribbons from "./Ribbons.js";
 import ColorList from "./ColorList";
 
 const BubblePage = props => {
-  const [colorList, setColorList] = useState(props.colors);
-  const [myColors, setMyColors] = useState([]);
+  const [colorList, setColorList] = useState([]);
 
   useEffect(() => {
     axios()
@@ -18,11 +18,20 @@ const BubblePage = props => {
       })
       .catch(err => console.log(err));
   }, []);
-
+  if (colorList.length === 0) {
+    return null;
+  }
   return (
     <>
       <ColorList {...props} colors={colorList} updateColors={setColorList} />
-      <Bubbles {...props} colors={colorList} />
+      <div className="display">
+        <span className="bubbles">
+          <Bubbles {...props} colors={colorList} />
+        </span>
+        <span className="ribbons">
+          <Ribbons {...props} colors={colorList} />
+        </span>
+      </div>
     </>
   );
 };
